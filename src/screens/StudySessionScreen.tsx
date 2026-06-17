@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'StudySession'>;
 
 export function StudySessionScreen({ route, navigation }: Props) {
   const { token, signOut } = useAuth();
-  const { deckId, mode = 'study' } = route.params;
+  const { deckId, deckName, mode = 'study' } = route.params;
 
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,29 +127,36 @@ export function StudySessionScreen({ route, navigation }: Props) {
     return (
       <View className="flex-1 items-center justify-center bg-background-light px-6 dark:bg-background-dark">
         <Text className="text-center font-bold text-2xl text-text-light dark:text-text-dark">
-          {sessionCompleted ? 'Sessão concluída' : 'Nenhum cartão disponível'}
+          {sessionCompleted ? 'Sessão concluída' : 'Esta disciplina ainda não tem cartões'}
         </Text>
         <Text className="mt-2 text-center font-regular text-base text-text-secondaryLight dark:text-text-secondaryDark">
           {sessionCompleted
             ? 'Suas respostas foram registradas. As revisões agendadas aparecem na aba Revisões.'
-            : 'Todos os cartões dessa disciplina já foram revisados por enquanto.'}
+            : 'Adicione cartões à disciplina antes de iniciar o estudo.'}
         </Text>
-        {sessionCompleted ? (
-          <View className="mt-6 w-full max-w-sm gap-3">
+        <View className="mt-6 w-full max-w-sm gap-3">
+          {sessionCompleted ? (
             <Pressable
               className="rounded-xl bg-primary py-4"
               onPress={() => navigation.navigate('Revisions', { deckId })}
             >
               <Text className="text-center font-bold text-base text-white">Ver revisões</Text>
             </Pressable>
+          ) : (
             <Pressable
-              className="rounded-xl border border-slate-300 py-4 dark:border-slate-600"
-              onPress={() => navigation.goBack()}
+              className="rounded-xl bg-primary py-4"
+              onPress={() => navigation.navigate('DeckDetail', { deckId, deckName })}
             >
-              <Text className="text-center font-medium text-base text-text-light dark:text-text-dark">Voltar</Text>
+              <Text className="text-center font-bold text-base text-white">Adicionar cartões</Text>
             </Pressable>
-          </View>
-        ) : null}
+          )}
+          <Pressable
+            className="rounded-xl border border-slate-300 py-4 dark:border-slate-600"
+            onPress={() => navigation.goBack()}
+          >
+            <Text className="text-center font-medium text-base text-text-light dark:text-text-dark">Voltar</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -179,6 +186,8 @@ export function StudySessionScreen({ route, navigation }: Props) {
           }}
           onFlipToFrontComplete={handleFlipToFrontComplete}
           difficultyLevel={currentCard.difficultyLevel}
+          rightStreak={currentCard.rightStreak}
+          wrongStreak={currentCard.wrongStreak}
         />
       </View>
 

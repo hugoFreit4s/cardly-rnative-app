@@ -10,5 +10,9 @@ export function fetchDashboardCharts(token: string | null): Promise<DashboardCha
 }
 
 export function fetchStudyCalendar(token: string | null, limit = 120): Promise<StudyCalendarResponse> {
-  return apiRequest<StudyCalendarResponse>(`/api/dashboard/calendar?limit=${limit}`, { token });
+  const timezoneOffsetMinutes = new Date().getTimezoneOffset();
+  return apiRequest<StudyCalendarResponse>(
+    `/api/dashboard/calendar?limit=${limit}&timezoneOffsetMinutes=${timezoneOffsetMinutes}`,
+    { token },
+  );
 }

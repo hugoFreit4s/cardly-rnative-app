@@ -12,9 +12,20 @@ type Props = {
   onToggle: () => void;
   onFlipToFrontComplete?: () => void;
   difficultyLevel?: DifficultyLevel;
+  rightStreak?: number;
+  wrongStreak?: number;
 };
 
-export function FlipCard({ question, answer, flipped, onToggle, onFlipToFrontComplete, difficultyLevel }: Props) {
+export function FlipCard({
+  question,
+  answer,
+  flipped,
+  onToggle,
+  onFlipToFrontComplete,
+  difficultyLevel,
+  rightStreak = 0,
+  wrongStreak = 0,
+}: Props) {
   const colors = useThemeColors();
   const styles = React.useMemo(() => createStyles(colors), [colors]);
   const rotate = useRef(new Animated.Value(0)).current;
@@ -70,6 +81,7 @@ export function FlipCard({ question, answer, flipped, onToggle, onFlipToFrontCom
             >
               {difficulty.label}
             </Text>
+            <Text style={styles.streakText}>Streak: {rightStreak} acertos / {wrongStreak} erros</Text>
             <Text style={styles.label}>Pergunta</Text>
             <Text style={styles.questionText}>{question}</Text>
             <Text style={styles.hint}>Toque para ver a resposta</Text>
@@ -88,6 +100,9 @@ export function FlipCard({ question, answer, flipped, onToggle, onFlipToFrontCom
         >
           <View style={styles.faceInner}>
             <Text style={[styles.difficultyBadge, styles.backDifficultyBadge]}>{difficulty.label}</Text>
+            <Text style={[styles.streakText, styles.backStreakText]}>
+              Streak: {rightStreak} acertos / {wrongStreak} erros
+            </Text>
             <Text style={styles.backLabel}>Resposta</Text>
             <Text style={styles.answerText}>{answer}</Text>
             <Text style={styles.backHint}>Toque para voltar</Text>
@@ -147,6 +162,15 @@ function createStyles(colors: ThemeColors) {
     backDifficultyBadge: {
       color: '#FFFFFF',
       backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+    streakText: {
+      fontFamily: 'DMSans_400Regular',
+      fontSize: 12,
+      color: colors.textMuted,
+      marginBottom: 6,
+    },
+    backStreakText: {
+      color: '#DBEAFE',
     },
     label: {
       fontFamily: 'DMSans_700Bold',

@@ -1,6 +1,15 @@
 export type UserRole = 'USER' | 'SUPERADMIN';
 export type DifficultyLevel = 'NONE' | 'EASY' | 'MEDIUM' | 'HARD';
-export type ScheduledInterval = 'HOURS_2' | 'DAYS_1' | 'DAYS_2' | 'DAYS_3' | 'DAYS_5' | 'DAYS_7' | 'DAYS_9';
+export type ScheduledInterval =
+  | 'HOURS_2'
+  | 'HOURS_4'
+  | 'HOURS_36'
+  | 'DAYS_1'
+  | 'DAYS_2'
+  | 'DAYS_3'
+  | 'DAYS_5'
+  | 'DAYS_7'
+  | 'DAYS_9';
 
 export type RegisterBody = {
   name: string;

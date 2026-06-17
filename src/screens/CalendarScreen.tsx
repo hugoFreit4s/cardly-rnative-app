@@ -10,17 +10,21 @@ function monthLabel(date: Date): string {
 }
 
 function monthKey(date: Date): string {
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function localDayKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 function buildMonthCells(baseDate: Date): Date[] {
-  const first = new Date(Date.UTC(baseDate.getUTCFullYear(), baseDate.getUTCMonth(), 1));
-  const startDay = first.getUTCDay();
+  const first = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+  const startDay = first.getDay();
   const gridStart = new Date(first);
-  gridStart.setUTCDate(first.getUTCDate() - startDay);
+  gridStart.setDate(first.getDate() - startDay);
   return Array.from({ length: 42 }, (_, idx) => {
     const d = new Date(gridStart);
-    d.setUTCDate(gridStart.getUTCDate() + idx);
+    d.setDate(gridStart.getDate() + idx);
     return d;
   });
 }
@@ -63,7 +67,7 @@ export function CalendarScreen() {
           className="rounded-lg border border-slate-300 px-3 py-2 dark:border-slate-600"
           onPress={() => {
             const prev = new Date(currentMonth);
-            prev.setUTCMonth(prev.getUTCMonth() - 1);
+            prev.setMonth(prev.getMonth() - 1);
             setCurrentMonth(prev);
           }}
         >
@@ -74,7 +78,7 @@ export function CalendarScreen() {
           className="rounded-lg border border-slate-300 px-3 py-2 dark:border-slate-600"
           onPress={() => {
             const next = new Date(currentMonth);
-            next.setUTCMonth(next.getUTCMonth() + 1);
+            next.setMonth(next.getMonth() + 1);
             setCurrentMonth(next);
           }}
         >
@@ -92,7 +96,7 @@ export function CalendarScreen() {
 
       <View className="flex-row flex-wrap gap-y-2">
         {cells.map((dateObj) => {
-          const dayKey = dateObj.toISOString().slice(0, 10);
+          const dayKey = localDayKey(dateObj);
           const isCurrentMonth = monthKey(dateObj) === activeMonth;
           const isStudied = studyDays.has(dayKey);
           return (
@@ -111,7 +115,7 @@ export function CalendarScreen() {
                         : 'text-slate-300 dark:text-slate-600'
                   }`}
                 >
-                  {dateObj.getUTCDate()}
+                  {dateObj.getDate()}
                 </Text>
               </View>
             </View>

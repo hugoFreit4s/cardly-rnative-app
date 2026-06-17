@@ -16,7 +16,7 @@ import { createDeck, deleteDeck, fetchDecks, updateDeck } from '../api/decksApi'
 import type { Deck } from '../api/types';
 import { useAuth } from '../auth/AuthContext';
 import { ConfirmModal } from '../components/ui/ConfirmModal';
-import { showError, showSuccess } from '../components/ui/toast';
+import { showError, showSuccess, showSuccessAction } from '../components/ui/toast';
 import type { AppStackParamList } from '../navigation/AppStack';
 import { fontFamily, typography, useThemeColors, type ThemeColors } from '../theme';
 
@@ -147,7 +147,9 @@ export function DecksScreen() {
           token
         );
         setDecks((prev) => [...prev, created]);
-        showSuccess('Disciplina criada com sucesso');
+        showSuccessAction('Disciplina criada com sucesso', 'Adicionar cartões', () =>
+          navigation.navigate('DeckDetail', { deckId: created.id, deckName: created.name })
+        );
         setCreateDraft(EMPTY_DRAFT);
       }
       setShowForm(false);
@@ -166,6 +168,10 @@ export function DecksScreen() {
 
   function openRevisions(deck: Deck) {
     navigation.navigate('Revisions', { deckId: deck.id });
+  }
+
+  function openDeckDetail(deck: Deck) {
+    navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name });
   }
 
   function openCreateForm() {
@@ -228,9 +234,11 @@ export function DecksScreen() {
             <Text style={styles.cardName}>{item.name}</Text>
             <Text style={styles.cardDescription}>{item.subject}</Text>
             {item.cardCount !== undefined && (
-              <Text style={styles.cardCount}>
-                {item.cardCount} {item.cardCount === 1 ? 'cartão' : 'cartões'}
-              </Text>
+              <Pressable onPress={() => openDeckDetail(item)} style={styles.cardCountLink}>
+                <Text style={styles.cardCount}>
+                  {item.cardCount} {item.cardCount === 1 ? 'cartão' : 'cartões'}
+                </Text>
+              </Pressable>
             )}
             <View style={styles.visibilityBadge}>
               <Text style={styles.cardVisibility}>{item.isPublic ? 'Público' : 'Privado'}</Text>
@@ -243,6 +251,9 @@ export function DecksScreen() {
               <Text style={styles.revisionEmpty}>Sem revisões disponíveis</Text>
             )}
             <View style={styles.cardActions}>
+              <Pressable style={styles.secondaryBtn} onPress={() => openDeckDetail(item)}>
+                <Text style={styles.secondaryBtnText}>Gerenciar cartões</Text>
+              </Pressable>
               <Pressable style={styles.secondaryBtn} onPress={() => openStudy(item)}>
                 <Text style={styles.secondaryBtnText}>Estudar</Text>
               </Pressable>
@@ -366,7 +377,8 @@ function createStyles(colors: ThemeColors) {
     },
     cardName: { fontFamily: fontFamily.bold, fontSize: 17, color: colors.primary },
     cardDescription: { fontFamily: fontFamily.regular, fontSize: 14, color: colors.textMuted, marginTop: 4 },
-    cardCount: { fontFamily: fontFamily.regular, fontSize: 12, color: colors.textMuted, marginTop: 8 },
+    cardCountLink: { alignSelf: 'flex-start', marginTop: 8 },
+    cardCount: { fontFamily: fontFamily.medium, fontSize: 12, color: colors.primary },
     visibilityBadge: {
       alignSelf: 'flex-start',
       marginTop: 8,
