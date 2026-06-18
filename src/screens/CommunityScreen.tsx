@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
@@ -18,8 +18,8 @@ export function CommunityScreen() {
   const [loading, setLoading] = useState(true);
   const [cloningId, setCloningId] = useState<number | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const data = await searchCommunitySubjects(token);
       setSubjects(data);
@@ -33,6 +33,12 @@ export function CommunityScreen() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useFocusEffect(
+    useCallback(() => {
+      load(true);
+    }, [load])
+  );
 
   function openClonedDeck(item: Deck) {
     if (!item.clonedDeckId) {
@@ -56,7 +62,7 @@ export function CommunityScreen() {
     }
   }
 
-  if (loading) {
+  if (loading && subjects.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark">
         <ActivityIndicator color="#2563EB" size="large" />
