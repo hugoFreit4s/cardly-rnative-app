@@ -1,10 +1,11 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useThemeColors, type ThemeColors } from '../../theme';
 import { DashboardHeaderActions } from '../ui/DashboardHeaderActions';
+import { HeaderIconButton } from '../ui/HeaderIconButton';
 import { AppDrawer } from './AppDrawer';
 
 type Props = {
@@ -20,15 +21,15 @@ export function DashboardShell({ children }: Props) {
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <Pressable
+        <HeaderIconButton
           accessibilityRole="button"
           accessibilityLabel={drawerOpen ? 'Fechar menu' : 'Abrir menu'}
           onPress={() => setDrawerOpen((prev) => !prev)}
           hitSlop={8}
-          style={styles.iconButton}
+          style={styles.menuButton}
         >
           <Feather name={drawerOpen ? 'x' : 'menu'} size={20} color={colors.text} />
-        </Pressable>
+        </HeaderIconButton>
         <Text style={styles.headerTitle}>Dashboard</Text>
         <DashboardHeaderActions />
       </View>
@@ -52,7 +53,6 @@ function createStyles(colors: ThemeColors, insets: { top: number; left: number; 
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 12,
       paddingTop: topPadding,
       paddingBottom: 12,
       paddingHorizontal: horizontalPadding,
@@ -60,14 +60,8 @@ function createStyles(colors: ThemeColors, insets: { top: number; left: number; 
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
     },
-    iconButton: {
-      height: 36,
-      width: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: colors.border,
+    menuButton: {
+      marginRight: 12,
     },
     headerTitle: {
       flex: 1,

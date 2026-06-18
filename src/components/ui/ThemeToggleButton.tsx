@@ -1,23 +1,28 @@
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 
 import { useTheme, useThemeColors } from '../../theme';
+import { HeaderIconButton } from './HeaderIconButton';
 
-export function ThemeToggleButton() {
+type Props = {
+  style?: StyleProp<ViewStyle>;
+};
+
+export function ThemeToggleButton({ style }: Props) {
   const { scheme, toggle } = useTheme();
   const colors = useThemeColors();
   const isDark = scheme === 'dark';
 
   return (
-    <Pressable
+    <HeaderIconButton
       accessibilityRole="button"
       accessibilityLabel="Alternar tema"
       onPress={toggle}
       hitSlop={8}
-      className="h-9 w-9 items-center justify-center rounded-md border border-slate-300 bg-transparent dark:border-slate-600"
+      style={style}
     >
       <Feather name={isDark ? 'sun' : 'moon'} size={18} color={colors.textMuted} />
-    </Pressable>
+    </HeaderIconButton>
   );
 }

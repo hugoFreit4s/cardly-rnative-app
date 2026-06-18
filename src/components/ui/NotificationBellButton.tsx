@@ -1,13 +1,14 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { fetchNotificationSummary } from '../../api/notificationsApi';
 import { useAuth } from '../../auth/AuthContext';
 import type { AppStackParamList } from '../../navigation/AppStack';
-import { useThemeColors } from '../../theme';
+import { fontFamily, useThemeColors, type ThemeColors } from '../../theme';
 import { playNotificationSound } from '../../utils/notificationSound';
+import { HeaderIconButton } from './HeaderIconButton';
 import { NotificationBellIcon } from './NotificationBellIcon';
 
 type Nav = NativeStackNavigationProp<AppStackParamList, 'Dashboard'>;
@@ -16,6 +17,7 @@ export function NotificationBellButton() {
   const navigation = useNavigation<Nav>();
   const { token } = useAuth();
   const colors = useThemeColors();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [unreadCount, setUnreadCount] = useState(0);
   const previousUnreadRef = useRef<number | null>(null);
 
@@ -51,19 +53,40 @@ export function NotificationBellButton() {
   const badgeLabel = unreadCount > 99 ? '99+' : String(unreadCount);
 
   return (
-    <Pressable
+    <HeaderIconButton
       accessibilityRole="button"
       accessibilityLabel="Notificações"
       onPress={() => navigation.navigate('Notifications')}
       hitSlop={8}
-      className="relative h-9 w-9 items-center justify-center rounded-md border border-slate-300 bg-transparent dark:border-slate-600"
     >
       <NotificationBellIcon size={20} color={colors.textMuted} />
       {unreadCount > 0 ? (
-        <View className="absolute -right-1 -top-1 min-h-[16px] min-w-[16px] items-center justify-center rounded-full bg-error px-1">
-          <Text className="text-[10px] font-bold text-white">{badgeLabel}</Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{badgeLabel}</Text>
         </View>
       ) : null}
-    </Pressable>
+    </HeaderIconButton>
   );
+}
+
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    badge: {
+      position: 'absolute',
+      right: -4,
+      top: -4,
+      minHeight: 16,
+      minWidth: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 8,
+      backgroundColor: colors.error,
+      paddingHorizontal: 4,
+    },
+    badgeText: {
+      fontFamily: fontFamily.bold,
+      fontSize: 10,
+      color: '#FFFFFF',
+    },
+  });
 }
